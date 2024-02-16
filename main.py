@@ -106,7 +106,7 @@ class STScraper:
             month = month or self._get_current_month()
             day = day or self._get_current_day()
 
-            params['date'] = '{0}.{1}.{2}'.format(day, month, year)
+            params['date'] = f'{day}.{month}.{year}'
             params['granularity'] = granularity
 
         print(self.DATA_URL + '?' + urlencode(params))
@@ -133,14 +133,18 @@ class STScraper:
         :return: parsed data
         """
         response_cons_data = response_data['values']['A+']['total']['data']
-        response_neto_data = response_data['values']['A-']['total']['data']
+
+        if "A-" in response_data:
+            response_neto_data = response_data['values']['A-']['total']['data']
+        else:
+            neto = False
 
         cons_data = [{
             'data': self._format_timestamp(item['timestamp']),
             'value': item['value']
         } for item in response_cons_data]
 
-        if neto:
+        if neto is True:
             neto_data = [{
                 'data': self._format_timestamp(item['timestamp']),
                 'value': item['value']
@@ -210,7 +214,6 @@ class STScraper:
 
         values = {}
         for field in fields:
-            #values[field] = root('input[name={0}]'.format(field)).attr('value')
             values[field] = root(f'input[name={field}]').attr('value')
 
         values['login'] = self.login
