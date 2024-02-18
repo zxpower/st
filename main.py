@@ -134,7 +134,7 @@ class STScraper:
         """
         response_cons_data = response_data['values']['A+']['total']['data']
 
-        if "A-" in response_data:
+        if "A-" in response_data['values'].keys():
             response_neto_data = response_data['values']['A-']['total']['data']
         else:
             neto = False
@@ -144,7 +144,7 @@ class STScraper:
             'value': item['value']
         } for item in response_cons_data]
 
-        if neto is True:
+        if neto:
             neto_data = [{
                 'data': self._format_timestamp(item['timestamp']),
                 'value': item['value']
